@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # event data readers supporting different datasets
 from pathlib import Path
 import weakref
@@ -21,11 +22,14 @@ class BaseEventReader:
 
 
 class DSECEventReaderAbstract(BaseEventReader):
-    def __init__(self, filepath: Path, dt_milliseconds: int):
+    _rectifier = None  # used for event undistortion and rectification.
+
+    def __init__(self, filepath: Path, rectify_filepath: Path, dt_milliseconds: int):
         super().__init__()
         assert filepath.is_file()
         assert filepath.name.endswith('.h5')
         self.h5f = h5py.File(str(filepath), 'r')
+        self._rectifier = h5py.File(str(rectify_filepath), 'r')
         self._finalizer = weakref.finalize(self, self.close_callback, self.h5f)
 
         self.event_slicer = EventSlicer(self.h5f)
@@ -59,4 +63,13 @@ class DSECEventReaderAbstract(BaseEventReader):
             raise StopIteration
 
         self.t_start_us = t_end_us
+
+        # event rectification
+        x = events['x']
+        y = events['y']
+        xy_rect = self._rectifier[x, y]
+        x_rect = xy_rect[:, 0]
+        y_rect = xy_rect[:, 1]
+        events['x'] = x_rect
+        events['y'] = y_rect
         return events
