@@ -1,0 +1,5 @@
+opencv-python
+numba
+h5py
+hdf5plugin
+ruff

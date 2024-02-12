@@ -2,9 +2,9 @@ import math
 from typing import Dict, Tuple
 
 import h5py
+import hdf5plugin
 from numba import jit
 import numpy as np
-import tables
 
 
 class EventSlicer:
@@ -30,7 +30,7 @@ class EventSlicer:
         #       0       2       2       3       3       3       5       5       8       9
         for key in self.h5f.keys():
             print(key)
-        print(self.h5f['ms_to_idx'])
+        print(self.h5f['ms_to_idx'])        
         print(self.h5f['ms_to_idx'][0])
         self.ms_to_idx = np.asarray(self.h5f['ms_to_idx'], dtype='int64')
 

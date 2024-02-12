@@ -1,9 +1,16 @@
-from .base import BaseEventReader
+from pathlib import Path
+import weakref
+import h5py
+
+from ._eventslicer import EventSlicer
+from .base import BaseEventReader, BaseEventFrameWriter
 
 
 class EventReader(BaseEventReader):
+    _finalizer = None
     _rectifier = None  # used for event undistortion and rectification.
     h5f = None  # handler to the h5f file
+    frameShape = None
 
     def __init__(self, filepath: Path, dt_ms: int = None, numevents_perslice: int = None):
         super().__init__(filepath, dt_ms, numevents_perslice)
@@ -12,17 +19,20 @@ class EventReader(BaseEventReader):
         self.h5f = h5py.File(str(filepath), 'r')
         self._finalizer = weakref.finalize(self, self.close_callback, self.h5f)
 
+        self.frameShape = (640, 480)
         self.event_slicer = EventSlicer(self.h5f)
+        self.SetRectifyMap(filepath.parent / "rectify_map.h5")  # Note: assume the rectify map is at the same folder with the data file
         if dt_ms is not None:
-	    self.dt_us = int(dt_ms * 1000)
-	    self.t_start_us = self.event_slicer.get_start_time_us()
-	    self.t_end_us = self.event_slicer.get_final_time_us()
-	    self._length = (self.t_end_us - self.t_start_us) // self.dt_us
+            self.dt_us = int(dt_ms * 1000)
+            self.t_start_us = self.event_slicer.get_start_time_us()
+            self.t_end_us = self.event_slicer.get_final_time_us()
+            self._length = (self.t_end_us - self.t_start_us) // self.dt_us
         elif numevents_perslice is not None:
             self.numevents_perslice = numevents_perslice
 
     def SetRectifyMap(self, rectify_filepath: Path):
-        self._rectifier = h5py.File(str(rectify_filepath), 'r')
+        with h5py.File(str(rectify_filepath), 'r') as h5_rect:
+            self._rectifier = h5_rect['rectify_map'][()]
 
     @staticmethod
     def close_callback(h5f: h5py.File):
@@ -50,7 +60,8 @@ class EventReader(BaseEventReader):
         # event rectification
         x = events['x']
         y = events['y']
-        xy_rect = self._rectifier[x, y]
+        
+        xy_rect = self._rectifier[y, x]
         x_rect = xy_rect[:, 0]
         y_rect = xy_rect[:, 1]
         events['x'] = x_rect
@@ -61,3 +72,9 @@ class EventReader(BaseEventReader):
         if self.dt_us is not None:
             events = self._GetNextSliceSbt()
         return events
+
+
+class EventFrameWriter(BaseEventFrameWriter):
+    def __init__(self, output_path: Path, is_save_png: bool = True, is_save_lmdb: bool = False):
+        super().__init__(output_path, is_save_png, is_save_lmdb)
+        pass
