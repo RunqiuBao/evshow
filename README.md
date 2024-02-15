@@ -5,7 +5,7 @@
 - **readwrite**: for different datasets, there will be different event loaders and writers.
 - **event2frame**: implementation for different event representation methods. Currently:
     - **SBT**
-      <div align="center">
+      <div align="left">
       <img src="https://github.com/RunqiuBao/eventshow/blob/main/.readme/sbt.png" width="200", height="150">
       </div>
     - **SBN**
