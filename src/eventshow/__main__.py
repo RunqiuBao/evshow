@@ -13,6 +13,7 @@ def main():
     parser.add_argument("-vo", "--viszonly", help="Only visualize, do not save to disk.")
     parser.add_argument("--dtms", help="Time interval in ms for each frame.")
     parser.add_argument("--numevents", help="Number of events per frame.")
+    parser.add_argument("--tsfile", help="Read in a list of timestamps as reference (from the same folder as input_file). Only support timestamps + number_of_events currently.")
     parser.add_argument("--concentrate", action='store_true', help="use concentrate network to generate sharp frames. Need to set --numevents.")
     parser.add_argument("--numframes", help="Number of event frames for early quit.")
     parser.add_argument("--savelmdb", action='store_true', help="whether save output to lmdb format.")
@@ -23,12 +24,20 @@ def main():
     parser.add_argument("-m", "--rw_module", default="base", help="official loaders: "f"{official_loaders}")
     args = parser.parse_args()
 
+    if not args.output_path:
+        print("Error: output_path is required.")
+        return
+
     if args.dtms and args.numevents:
         print("Error: only one of --dtms and --numevents can be set.")
         return
     
     if args.concentrate and not args.numevents:
         print("Error: --concentrate need to set --numevents.")
+        return
+    
+    if args.tsfile and not args.numevents:
+        print("Error: --tsfile need to set --numevents.")
         return
 
     eventshow.eventshow(
@@ -40,6 +49,7 @@ def main():
         is_use_concentrate=args.concentrate if args.concentrate else False,
         num_frames_exit=int(args.numframes) if args.numframes else None,
         is_save_lmdb=args.savelmdb if args.savelmdb else False,
+        existing_tsfile_path=Path(args.tsfile) if args.tsfile else None
     )
 
 

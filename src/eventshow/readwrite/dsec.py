@@ -38,6 +38,9 @@ class EventReader(BaseEventReader):
         with h5py.File(str(rectify_filepath), 'r') as h5_rect:
             self._rectifier = h5_rect['rectify_map'][()]
 
+    def GetTimeOffsetUs(self):
+        return self.event_slicer.get_start_time_us()
+
     @staticmethod
     def close_callback(h5f: h5py.File):
         h5f.close()
@@ -62,6 +65,15 @@ class EventReader(BaseEventReader):
         y_rect = xy_rect[:, 1]
         events['x'] = x_rect
         events['y'] = y_rect
+        return events
+    
+    @staticmethod
+    def _FilterEventsOutsideOfImg(events, frame_shape):
+        valid_mask = numpy.logical_and(numpy.where(events['x'] < frame_shape[0], True, False), numpy.where(events['y'] < frame_shape[1], True, False))
+        events['x'] = events['x'][valid_mask]
+        events['y'] = events['y'][valid_mask]
+        events['t'] = events['t'][valid_mask]
+        events['p'] = events['p'][valid_mask]
         return events
 
     def _GetNextSliceSbt(self):
@@ -94,11 +106,13 @@ class EventReader(BaseEventReader):
             events = self._GetNextSliceSbn()
         else:
             raise NotImplementedError
-        valid_mask = numpy.logical_and(numpy.where(events['x'] < self.frameShape[0], True, False), numpy.where(events['y'] < self.frameShape[1], True, False))
-        events['x'] = events['x'][valid_mask]
-        events['y'] = events['y'][valid_mask]
-        events['t'] = events['t'][valid_mask]
-        events['p'] = events['p'][valid_mask]
+        events = self._FilterEventsOutsideOfImg(events, self.frameShape)
+        return events
+    
+    def GetSliceSbnByTimestamp(self, ts_end):
+        events = self.event_slicer.get_events_base_number(self.numevents_perslice, ts_end)
+        events = self._RectifyEvents(events, self._rectifier)
+        events = self._FilterEventsOutsideOfImg(events, self.frameShape)
         return events
 
 

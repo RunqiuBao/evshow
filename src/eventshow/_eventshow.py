@@ -1,6 +1,7 @@
 import sys
 import importlib.machinery
 from pathlib import Path
+import json
 
 from .event2frame.stacking import AccumulateEventsIntoFrame
 from .event2frame.ai import EventFrameConcentrater
@@ -14,7 +15,8 @@ def eventshow(
     numevents_perslice: int,
     is_use_concentrate: bool,
     num_frames_exit: int,
-    is_save_lmdb: bool
+    is_save_lmdb: bool,
+    existing_tsfile_path: Path
 ) -> None:
     """
     Main logic in this func. Read raw events, transform to frame based representations and either
@@ -38,9 +40,21 @@ def eventshow(
     if is_use_concentrate:
         event_concentrater = EventFrameConcentrater(numevents_perslice, eventReader.frameShape[1], eventReader.frameShape[0], stack_size=10)  # Note: stack_size is fixed to 10 due to network structure.
 
-    for indexBatch, events in enumerate(eventReader):
-        if num_frames_exit and indexBatch >= num_frames_exit:
-            break
+    if existing_tsfile_path is None:
+        list_frameEnd_ts = []
+    else:
+        with open(existing_tsfile_path, 'r') as file:
+            list_frameEnd_ts = json.load(file)
+            list_frameEnd_ts = [int(ts) for ts in list_frameEnd_ts]            
+
+    lengthBatch = len(eventReader) if existing_tsfile_path is None else len(list_frameEnd_ts)
+    lengthBatch = num_frames_exit if num_frames_exit is not None else lengthBatch
+    for indexBatch in range(lengthBatch):
+        if existing_tsfile_path is None:
+            events = next(eventReader)
+        else:
+            ts_end = list_frameEnd_ts[indexBatch]
+            events = eventReader.GetSliceSbnByTimestamp(ts_end)        
 
         # TODO: visualize here
         if is_use_concentrate:
@@ -50,5 +64,13 @@ def eventshow(
         
         # write to disk
         eventFrameWriter.WriteOneFrame(indexBatch, eventFrameImg)
+
+        if existing_tsfile_path is None:
+            list_frameEnd_ts.append(str(events['t'][-1] + eventReader.GetTimeOffsetUs()))
+
+    if existing_tsfile_path is None:
+        # write timestamp file:
+        with open(str(output_path / "timestamps.json"), 'w') as file:
+            json.dump(list_frameEnd_ts, file)
 
     print("Done!")

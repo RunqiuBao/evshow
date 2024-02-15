@@ -14,6 +14,8 @@ class EventSlicer:
         for dset_str in ['p', 'x', 'y', 't']:
             self.events[dset_str] = self.h5f['events/{}'.format(dset_str)]
 
+        self.total_event = self.events['t'].size
+
         # This is the mapping from milliseconds to event index:
         # It is defined such that
         # (1) t[ms_to_idx[ms]] >= ms*1000
@@ -105,6 +107,44 @@ class EventSlicer:
             events[dset_str] = np.asarray(self.events[dset_str][t_start_us_idx:t_end_us_idx])
         return events
 
+    def get_events_base_number(self, number_of_event: int,  t_end_us: int) -> Dict[str, np.ndarray]:
+        """Get events (p, x, y, t) within the specified time window
+        Parameters
+        ----------
+        number_of_event: number of events
+        t_end_us: end time in microseconds
+        Returns
+        -------
+        events: dictionary of (p, x, y, t) or None if the time window cannot be retrieved
+        """
+        t_start_us = t_end_us - 1000
+        assert t_start_us < t_end_us
+
+        # We assume that the times are top-off-day, hence subtract offset:
+        t_start_us -= self.t_offset
+        t_end_us -= self.t_offset
+        
+        t_start_ms, t_end_ms = self.get_conservative_window_ms(t_start_us, t_end_us)
+
+        t_start_ms_idx = self.ms2idx(t_start_ms)
+        t_end_ms_idx = self.ms2idx(t_end_ms)
+
+        assert t_start_ms_idx is not None or t_end_ms_idx is not None
+
+        events = dict()
+        time_array_conservative = np.asarray(self.h5f['events/{}'.format('t')][t_start_ms_idx:t_end_ms_idx])
+        _, idx_end_offset = self.get_time_indices_offsets(time_array_conservative, t_start_us, t_end_us)
+        t_end_us_idx = t_start_ms_idx + idx_end_offset
+        # Again add t_offset to get gps time
+
+        t_start_us_idx = max(0, t_end_us_idx - number_of_event)
+        t_end_us_idx = min(self.total_event, t_end_us_idx)
+
+        events['t'] = np.asarray(self.h5f['events/{}'.format('t')][t_start_us_idx:t_end_us_idx]) + self.t_offset
+        for dset_str in ['p', 'x', 'y']:
+            events[dset_str] = np.asarray(self.h5f['events/{}'.format(dset_str)][t_start_us_idx:t_end_us_idx])
+            assert events[dset_str].size == events['t'].size
+        return events
 
     @staticmethod
     def get_conservative_window_ms(ts_start_us: int, ts_end_us) -> Tuple[int, int]:
