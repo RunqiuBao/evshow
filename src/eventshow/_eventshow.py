@@ -3,15 +3,16 @@ import importlib.machinery
 from pathlib import Path
 
 from .event2frame.stacking import AccumulateEventsIntoFrame
+from .event2frame.ai import EventFrameConcentrater
 
 
 def eventshow(
     event_rw_module: str,
     input_file_path: Path,
     output_path: Path,
-    seq_index: int,
     dt_ms: int,
     numevents_perslice: int,
+    is_use_concentrate: bool,
     num_frames_exit: int,
     is_save_lmdb: bool
 ) -> None:
@@ -34,13 +35,20 @@ def eventshow(
     eventReader = readwrite_module.EventReader(input_file_path, dt_ms=dt_ms, numevents_perslice=numevents_perslice)
     eventFrameWriter = readwrite_module.EventFrameWriter(output_path, is_save_lmdb=is_save_lmdb)
 
+    if is_use_concentrate:
+        event_concentrater = EventFrameConcentrater(numevents_perslice, eventReader.frameShape[1], eventReader.frameShape[0], stack_size=10)  # Note: stack_size is fixed to 10 due to network structure.
+
     for indexBatch, events in enumerate(eventReader):
         if num_frames_exit and indexBatch >= num_frames_exit:
             break
-        # TODO: visualize here
-        # write to disk
-        eventFrameImg, eventFrame = AccumulateEventsIntoFrame(events, eventReader.frameShape)
-        eventFrameWriter.WriteOneFrame(seq_index if seq_index else 0, indexBatch, eventFrameImg)
 
+        # TODO: visualize here
+        if is_use_concentrate:
+            eventFrameImg = event_concentrater[events]
+        else:
+            eventFrameImg, eventFrame = AccumulateEventsIntoFrame(events, eventReader.frameShape)
+        
+        # write to disk
+        eventFrameWriter.WriteOneFrame(indexBatch, eventFrameImg)
 
     print("Done!")

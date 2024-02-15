@@ -1,6 +1,7 @@
 from pathlib import Path
 import weakref
 import h5py
+import numpy
 
 from ._eventslicer import EventSlicer
 from .base import BaseEventReader, BaseEventFrameWriter
@@ -29,6 +30,9 @@ class EventReader(BaseEventReader):
             self._length = (self.t_end_us - self.t_start_us) // self.dt_us
         elif numevents_perslice is not None:
             self.numevents_perslice = numevents_perslice
+            self.num_start = 0
+            self.num_end = self.event_slicer.get_number_of_events()
+            self._length = (self.num_end - self.num_start) // self.numevents_perslice
 
     def SetRectifyMap(self, rectify_filepath: Path):
         with h5py.File(str(rectify_filepath), 'r') as h5_rect:
@@ -46,6 +50,19 @@ class EventReader(BaseEventReader):
 
     def __iter__(self):
         return self
+    
+    @staticmethod
+    def _RectifyEvents(events, rectifier):
+        # event rectification
+        x = events['x']
+        y = events['y']
+        
+        xy_rect = rectifier[y, x]
+        x_rect = xy_rect[:, 0]
+        y_rect = xy_rect[:, 1]
+        events['x'] = x_rect
+        events['y'] = y_rect
+        return events
 
     def _GetNextSliceSbt(self):
         t_end_us = self.t_start_us + self.dt_us
@@ -55,22 +72,33 @@ class EventReader(BaseEventReader):
         if events is None:
             raise StopIteration
 
+        events = self._RectifyEvents(events, self._rectifier)
         self.t_start_us = t_end_us
-
-        # event rectification
-        x = events['x']
-        y = events['y']
-        
-        xy_rect = self._rectifier[y, x]
-        x_rect = xy_rect[:, 0]
-        y_rect = xy_rect[:, 1]
-        events['x'] = x_rect
-        events['y'] = y_rect
+        return events
+    
+    def _GetNextSliceSbn(self):
+        num_end = self.num_start + self.numevents_perslice
+        if num_end > self.num_end:
+            raise StopIteration
+        events = self.event_slicer.get_events_byNumber(self.num_start, num_end)
+        if events is None:
+            raise StopIteration
+        events = self._RectifyEvents(events, self._rectifier)
+        self.num_start = num_end
         return events
 
     def __next__(self):
         if self.dt_us is not None:
             events = self._GetNextSliceSbt()
+        elif self.numevents_perslice is not None:
+            events = self._GetNextSliceSbn()
+        else:
+            raise NotImplementedError
+        valid_mask = numpy.logical_and(numpy.where(events['x'] < self.frameShape[0], True, False), numpy.where(events['y'] < self.frameShape[1], True, False))
+        events['x'] = events['x'][valid_mask]
+        events['y'] = events['y'][valid_mask]
+        events['t'] = events['t'][valid_mask]
+        events['p'] = events['p'][valid_mask]
         return events
 
 

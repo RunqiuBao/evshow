@@ -1,4 +1,4 @@
-#!/usr/bAin/python3
+#!/usr/bin/python3
 import argparse
 from pathlib import Path
 
@@ -13,8 +13,8 @@ def main():
     parser.add_argument("-vo", "--viszonly", help="Only visualize, do not save to disk.")
     parser.add_argument("--dtms", help="Time interval in ms for each frame.")
     parser.add_argument("--numevents", help="Number of events per frame.")
+    parser.add_argument("--concentrate", action='store_true', help="use concentrate network to generate sharp frames. Need to set --numevents.")
     parser.add_argument("--numframes", help="Number of event frames for early quit.")
-    parser.add_argument("--seqindex", help="index of this sequence. For saving into lmdb format.")
     parser.add_argument("--savelmdb", action='store_true', help="whether save output to lmdb format.")
 
     official_loaders = [
@@ -27,13 +27,17 @@ def main():
         print("Error: only one of --dtms and --numevents can be set.")
         return
     
+    if args.concentrate and not args.numevents:
+        print("Error: --concentrate need to set --numevents.")
+        return
+
     eventshow.eventshow(
         args.rw_module,
         Path(args.input_file),
         Path(args.output_path),
-        seq_index=int(args.seqindex) if args.seqindex else None,
         dt_ms=int(args.dtms) if args.dtms else None,
         numevents_perslice=int(args.numevents) if args.numevents else None,
+        is_use_concentrate=args.concentrate if args.concentrate else False,
         num_frames_exit=int(args.numframes) if args.numframes else None,
         is_save_lmdb=args.savelmdb if args.savelmdb else False,
     )

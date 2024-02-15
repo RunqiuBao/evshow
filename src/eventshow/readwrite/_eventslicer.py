@@ -45,6 +45,9 @@ class EventSlicer:
 
     def get_final_time_us(self):
         return self.t_final
+    
+    def get_number_of_events(self):
+        return self.events['t'].size
 
     def get_events(self, t_start_us: int, t_end_us: int) -> Dict[str, np.ndarray]:
         """Get events (p, x, y, t) within the specified time window

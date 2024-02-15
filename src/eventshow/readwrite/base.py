@@ -68,15 +68,15 @@ class BaseEventFrameWriter:
             png_path.mkdir(parents=True, exist_ok=True)
             self._pngSavePath = png_path
 
-    def WriteOneFrame(self, seq_index, frame_index, oneFrame):
+    def WriteOneFrame(self, frame_index, oneFrame):
         if self._lmdbWriter is not None:
             self._lmdbWriter.write(frame_index, oneFrame)
-            code = '%03d_%06d' % (seq_index, frame_index)
+            code = '%06d' % (frame_index)
             code = code.encode()
             self._lmdbWriter.write(code, oneFrame)
 
         if self._pngSavePath is not None:            
-            png_path = self._pngSavePath / ('%03d_%06d.png' % (seq_index, frame_index))
+            png_path = self._pngSavePath / ('%06d.png' % (frame_index))
             cv2.imwrite(str(png_path), oneFrame)
 
     @staticmethod
@@ -88,5 +88,3 @@ class BaseEventFrameWriter:
     
     def __exit__(self, exc_type, exc_value, traceback):
         self._finalizer()
-
-                
