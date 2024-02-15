@@ -9,9 +9,13 @@
       <img src="https://github.com/RunqiuBao/eventshow/blob/main/.readme/sbt.png" width="200", height="150">
       </div>
     - **SBN**
+      <div align="left">
       <img src="https://github.com/RunqiuBao/eventshow/blob/main/.readme/sbn.png" width="200", height="150">
+      </div>
     - **Concentrated SBN**: from [se-cff](https://github.com/yonseivnl/se-cff).
+      <div align="left">
       <img src="https://github.com/RunqiuBao/eventshow/blob/main/.readme/concentrate.png" width="200", height="150">
+      </div>
 
 ## Example:
 - for dsec dataset, use SBT, save 10 sample frames:
