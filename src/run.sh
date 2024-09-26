@@ -1,2 +1,2 @@
-python3 -m evshow /home/runqiu/Documents/datasets/eventpicking/train/seq0/events/left/events.h5 -o /home/runqiu/Documents/datasets/eventpicking/train/view4label/0/0_left/ --numevents 200000 --rw_module dsec --concentrate
+python3 -m evshow /home/runqiu/Documents/datasets/eventpicking/train/seq0/events/left/events.h5 -o /home/runqiu/Documents/datasets/eventpicking/train/view4label/0/0_left/ --numevents 200000 --rw_module dsec --e2vid
 # python3 -m evshow /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/right/events.h5 -o /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/right/ --numevents 500000 --rw_module dsec --concentrate --tsfile /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/left/timestamps.json
