@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/wkentaro/imshow/raw/main/.readme/icon.png](https://github.com/RunqiuBao/evshow/blob/main/.readme/evshow.png" width="200", height="200">
+  <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/evshow.png" width="200", height="200">
   <h1>Evshow</h1>
   <p>
     <b>Convert event data into frame representation.</b>
@@ -28,7 +28,7 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
       </div>
     - **rpg_e2vid**: from [e2vid]([https://github.com/yonseivnl/se-cff](https://github.com/uzh-rpg/rpg_e2vid)).
       <div align="left">
-      <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/concentrate.png" width="200", height="150">
+      <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/e2vid.png" width="200", height="150">
       </div>
 
 ## Example:
