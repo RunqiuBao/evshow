@@ -1,7 +1,15 @@
-<div style="text-align: center;">
-  <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/evshow.png" alt="description" />
-  <p>Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2frame representation software for commandline usage.</p>
+<div align="center">
+  <img src="https://github.com/wkentaro/imshow/raw/main/.readme/icon.png](https://github.com/RunqiuBao/evshow/blob/main/.readme/evshow.png" width="200", height="200">
+  <h1>Evshow</h1>
+  <p>
+    <b>Convert event data into frame representation.</b>
+  </p>
+  <br>
+  <br>
+  <br>
 </div>
+
+Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2frame representation software for commandline usage
 
 ## Two extensible sub-packages:
 - **readwrite**: for different datasets, there will be different event loaders and writers.
