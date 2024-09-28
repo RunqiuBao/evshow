@@ -15,7 +15,7 @@ class Event2VideoConverter:
     def __init__(self, height: int, width: int, num_bins: int) -> None:
         self.device = torch.device('cuda:' + str(torch.cuda.current_device())) if torch.cuda.is_available() else torch.device('cpu')
         providers = [("CUDAExecutionProvider", {"device_id": torch.cuda.current_device()})]  # Note: if cuda not available, it will fall back to CPU.
-        self.ort_session = onnxruntime.InferenceSession("evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
+        self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
         self.model_params = {
             "imageHeight": height,
             "imageWidth": width,

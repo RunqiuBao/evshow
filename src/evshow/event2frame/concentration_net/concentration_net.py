@@ -41,7 +41,7 @@ class EventFrameConcentrater:
         self.stack_function = MixedDensityEventStacking(stack_size, num_of_event,
                                                            event_height, event_width, **kwargs)        
         providers = [("CUDAExecutionProvider", {"device_id": torch.cuda.current_device()})]  # Note: if cuda not available, it will fall back to CPU.
-        self.ort_session = onnxruntime.InferenceSession("evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
+        self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
 
     def __getitem__(self, raw_events):
         event_data = self._pre_load_event_data(raw_events)
