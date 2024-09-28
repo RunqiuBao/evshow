@@ -2,6 +2,7 @@ import sys
 import importlib.machinery
 from pathlib import Path
 import json
+import tqdm
 
 from .event2frame.stacking import AccumulateEventsIntoFrame
 from .event2frame.concentration_net.concentration_net import EventFrameConcentrater
@@ -54,7 +55,7 @@ def evshow(
 
     lengthBatch = len(eventReader) if existing_tsfile_path is None else len(list_frameEnd_ts)
     lengthBatch = num_frames_exit if num_frames_exit is not None else lengthBatch
-    for indexBatch in range(lengthBatch):
+    for indexBatch in tqdm.tqdm(range(lengthBatch)):
         if existing_tsfile_path is None:
             events = next(eventReader)
         else:
