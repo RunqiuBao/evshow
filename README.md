@@ -32,8 +32,18 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
       <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/e2vid.png" width="200", height="150">
       </div>
 
-## Example:
-- for dsec dataset, use SBT, save 10 sample frames:
-```
-eventshow /home/runqiu/Desktop/dsec/interlaken_00_a/events/left/events.h5 -o /home/runqiu/Desktop/dsec/interlaken_00_a/events/left/ --dtms 20 --numframes 10  --rw_module dsec
-```
+## Install and Usage:
+- **Install**:
+  - Build from source:
+    ```
+    git clone https://github.com/RunqiuBao/evshow.git
+    pip install -r requirements.txt
+    python3 -m pip install ./
+    ```
+  - Pip:
+- **Example usage**:
+  - On [dsec](https://github.com/uzh-rpg/DSEC) format data:
+    ```
+    # accumulating events every 200000, using e2vid conversion, generate first 10 frames.
+    evshow data/sample_dsecformat.h5 -o data/seq0/ --numevents 200000 --rw_module dsec --e2vid --numframes 10
+    ```
