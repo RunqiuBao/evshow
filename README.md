@@ -35,7 +35,7 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
 ## Install and Usage:
 - **Install**:
   - Build from source:
-    ```
+    ```bash
     git clone https://github.com/RunqiuBao/evshow.git
     pip install -r requirements.txt
     python3 -m pip install ./
@@ -43,7 +43,7 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
   - Pip:
 - **Example usage**:
   - On [dsec](https://github.com/uzh-rpg/DSEC) format data:
-    ```
+    ```bash
     # accumulating events every 200000, using e2vid conversion, generate first 10 frames.
     evshow data/sample_dsecformat.h5 -o data/seq0/ --numevents 200000 --rw_module dsec --e2vid --numframes 10
     ```
