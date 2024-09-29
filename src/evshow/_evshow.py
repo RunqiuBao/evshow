@@ -28,7 +28,7 @@ def evshow(
     # import rw module
     if (Path("readwrite") / event_rw_module).exists():  # Note: a 3rdparty module in arbitrary path
         readwrite_module = importlib.machinery.SourceFileLoader(
-            " readwrite", event_rw_module
+            "readwrite", event_rw_module
         ).load_module()
     else:
         try:
@@ -69,7 +69,7 @@ def evshow(
             eventFrameImg = e2vid_converter[events]
         else:
             eventFrameImg, eventFrame = AccumulateEventsIntoFrame(events, eventReader.frameShape)
-        
+
         # write to disk
         eventFrameWriter.WriteOneFrame(indexBatch, eventFrameImg)
 
