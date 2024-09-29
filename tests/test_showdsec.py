@@ -4,6 +4,7 @@ import os
 
 import evshow
 
+
 @pytest.fixture
 def inputs_e2vid():
     return {

@@ -7,7 +7,7 @@ import cv2
 from collections import deque
 import scipy.stats
 
-from .timers import Timer, CudaTimer
+from .timers import MyTimer
 
 
 # ------------------------------------- from rpg_e2vid -------------------------------------
@@ -96,7 +96,7 @@ class EventPreprocessor:
         # Normalize the event tensor (voxel grid) so that
         # the mean and stddev of the nonzero values in the tensor are equal to (0.0, 1.0)
         if not self.no_normalize:
-            with CudaTimer('Normalization'):
+            with MyTimer('Normalization'):
                 nonzero_ev = (events != 0)
                 num_nonzeros = nonzero_ev.sum()
                 if num_nonzeros > 0:
@@ -130,7 +130,7 @@ class IntensityRescaler:
         param img: [1 x 1 x H x W] Tensor taking values in [0, 1]
         """
         if self.auto_hdr:
-            with CudaTimer('Compute Imin/Imax (auto HDR)'):
+            with MyTimer('Compute Imin/Imax (auto HDR)'):
                 Imin = torch.min(img).item()
                 Imax = torch.max(img).item()
 
@@ -146,7 +146,7 @@ class IntensityRescaler:
                 self.Imin = np.median([rmin for rmin, rmax in self.intensity_bounds])
                 self.Imax = np.median([rmax for rmin, rmax in self.intensity_bounds])
 
-        with CudaTimer('Intensity rescaling'):
+        with MyTimer('Intensity rescaling'):
             img = 255.0 * (img - self.Imin) / (self.Imax - self.Imin)
             img.clamp_(0.0, 255.0)
             img = img.byte()  # convert to 8-bit tensor
@@ -165,7 +165,7 @@ class ImageFilter:
     def __call__(self, img):
 
         if self.bilateral_filter_sigma:
-            with Timer('Bilateral filter (sigma={:.2f})'.format(self.bilateral_filter_sigma)):
+            with MyTimer('Bilateral filter (sigma={:.2f})'.format(self.bilateral_filter_sigma)):
                 filtered_img = np.zeros_like(img)
                 filtered_img = cv2.bilateralFilter(
                     img, 5, 25.0 * self.bilateral_filter_sigma, 25.0 * self.bilateral_filter_sigma)
@@ -188,7 +188,7 @@ class UnsharpMaskFilter:
 
     def __call__(self, img):
         if self.unsharp_mask_amount > 0:
-            with CudaTimer('Unsharp mask'):
+            with MyTimer('Unsharp mask'):
                 blurred = F.conv2d(img, self.gaussian_kernel,
                                    padding=self.gaussian_kernel_size // 2)
                 img = (1 + self.unsharp_mask_amount) * img - self.unsharp_mask_amount * blurred
@@ -255,7 +255,7 @@ def events_to_voxel_grid_pytorch(events, num_bins, width, height, device):
     :return voxel_grid: PyTorch event tensor (on the device specified)
     """
 
-    DeviceTimer = CudaTimer if device.type == 'cuda' else Timer
+    DeviceTimer = MyTimer
 
     assert(events.shape[1] == 4)
     assert(num_bins > 0)

@@ -44,7 +44,7 @@ def main():
     if args.tsfile and not args.numevents:
         print("Error: --tsfile need to set --numevents.")
         return
-
+    
     evshow.evshow(
         args.rw_module,
         Path(args.input_file),

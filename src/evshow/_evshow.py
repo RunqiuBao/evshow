@@ -3,20 +3,11 @@ import importlib.machinery
 from pathlib import Path
 import json
 import tqdm
-import pkgutil
 
 from .event2frame.stacking import AccumulateEventsIntoFrame
 from .event2frame.concentration_net.concentration_net import EventFrameConcentrater
 from .event2frame.e2vid.e2vid_net import Event2VideoConverter
 
-
-def print_modules_in_package(package_name):
-    # Import the package
-    package = importlib.import_module(package_name)
-    
-    # Iterate through all the modules in the package
-    for module_info in pkgutil.iter_modules(package.__path__):
-        print(module_info.name)
 
 def evshow(
     event_rw_module: str,
@@ -43,7 +34,6 @@ def evshow(
         try:
             readwrite_module = importlib.import_module(f"evshow.readwrite.{event_rw_module}")
         except ModuleNotFoundError:
-            print_modules_in_package("evshow.readwrite.{event_rw_module}")
             print(f"Error: module {event_rw_module!r} not found.\n", file=sys.stderr)
             sys.exit(1)
 

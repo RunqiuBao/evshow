@@ -3,6 +3,7 @@ import numpy
 import torch
 
 from .utils import CropParameters, EventPreprocessor, IntensityRescaler, ImageFilter, UnsharpMaskFilter, events_to_voxel_grid, events_to_voxel_grid_pytorch
+from ..shared.utils import check_cuda
 
 
 class Event2VideoConverter:
@@ -14,7 +15,7 @@ class Event2VideoConverter:
 
     def __init__(self, height: int, width: int, num_bins: int) -> None:
         self.device = torch.device('cuda:' + str(torch.cuda.current_device())) if torch.cuda.is_available() else torch.device('cpu')
-        if onnxruntime.get_device() == 'GPU':
+        if check_cuda():
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
             self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)

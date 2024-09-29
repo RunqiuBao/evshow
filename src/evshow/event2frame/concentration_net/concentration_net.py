@@ -17,6 +17,7 @@ import onnxruntime
 import numpy
 
 from ..stacking import MixedDensityEventStacking
+from ..shared.utils import check_cuda
 
 
 def to_numpy(tensor):
@@ -40,7 +41,7 @@ class EventFrameConcentrater:
         self.stack_function = MixedDensityEventStacking(stack_size, num_of_event,
                                                            event_height, event_width, **kwargs) 
 
-        if onnxruntime.get_device() == 'GPU':
+        if check_cuda():
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
             self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
