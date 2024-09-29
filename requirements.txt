@@ -7,3 +7,4 @@ tqdm
 onnxruntime-gpu
 torch
 scipy
+lmdb
