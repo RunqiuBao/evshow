@@ -5,3 +5,4 @@ hdf5plugin
 ruff
 tqdm
 onnxruntime-gpu
+torch
