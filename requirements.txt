@@ -4,7 +4,7 @@ h5py
 hdf5plugin
 ruff
 tqdm
-onnxruntime-gpu==1.17.0
+onnxruntime-gpu
 torch
 scipy
 lmdb
