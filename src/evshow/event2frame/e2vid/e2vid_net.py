@@ -17,9 +17,9 @@ class Event2VideoConverter:
         if onnxruntime.get_device() == 'GPU':
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
+            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
         else:
-            providers = ["CPUExecutionProvider"]
-        self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
+            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx")
         self.model_params = {
             "imageHeight": height,
             "imageWidth": width,

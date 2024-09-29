@@ -43,9 +43,9 @@ class EventFrameConcentrater:
         if onnxruntime.get_device() == 'GPU':
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
+            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
         else:
-            providers = ["CPUExecutionProvider"]
-        self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
+            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx")
 
     def __getitem__(self, raw_events):
         event_data = self._pre_load_event_data(raw_events)
