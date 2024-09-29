@@ -14,7 +14,6 @@ torch.onnx.export(
 )
 """
 import onnxruntime
-import torch
 import numpy
 
 from ..stacking import MixedDensityEventStacking
@@ -40,8 +39,12 @@ class EventFrameConcentrater:
         ) -> None:
         self.stack_function = MixedDensityEventStacking(stack_size, num_of_event,
                                                            event_height, event_width, **kwargs) 
-              
-        providers = [("CUDAExecutionProvider", {"device_id": torch.cuda.current_device()})]  # Note: if cuda not available, it will fall back to CPU.
+
+        if onnxruntime.get_device() == 'GPU':
+            print("Using GPU for onnx inference")
+            providers = ["CPUExecutionProvider", ("CUDAExecutionProvider", {"device_id": 0})]
+        else:
+            providers = ["CPUExecutionProvider"]
         self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
 
     def __getitem__(self, raw_events):
