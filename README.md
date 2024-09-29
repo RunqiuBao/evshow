@@ -9,6 +9,8 @@
   <br>
 </div>
 
+<a href="https://pypi.org/project/evshow"><img src="https://img.shields.io/pypi/pyversions/evshow.svg"></a>
+<a href="https://pypi.python.org/pypi/evshow"><img src="https://img.shields.io/pypi/v/evshow.svg"></a> <br>
 Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2frame representation software for commandline usage
 
 ## Two extensible sub-packages:
