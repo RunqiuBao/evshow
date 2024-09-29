@@ -16,7 +16,7 @@ class Event2VideoConverter:
         self.device = torch.device('cuda:' + str(torch.cuda.current_device())) if torch.cuda.is_available() else torch.device('cpu')
         if onnxruntime.get_device() == 'GPU':
             print("Using GPU for onnx inference")
-            providers = ["CPUExecutionProvider", ("CUDAExecutionProvider", {"device_id": 0})]
+            providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
         else:
             providers = ["CPUExecutionProvider"]
         self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
