@@ -59,6 +59,7 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
     git lfs install
     # use git LFS to download sample data
     git lfs pull
+    # or download the sample data from here (https://drive.google.com/file/d/1bPtD5iJ4tcNJVkIboVrkbzbF0N7AMs1A/view?usp=sharing) and put it in the data/ folder
     
     # accumulating events every 200000, using e2vid conversion, generate first 10 frames.
     evshow data/sample_dsecformat.h5 -o data/seq0/ --numevents 200000 --rw_module dsec --e2vid --numframes 10
