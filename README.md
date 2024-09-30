@@ -45,6 +45,9 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
     python3 -m pip install ./
     ```
   - Pip:
+    ```
+    pip install evshow
+    ```
 - **Example usage**:
   - On [dsec](https://github.com/uzh-rpg/DSEC) format data:
     ```bash
