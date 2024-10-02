@@ -15,6 +15,7 @@ torch.onnx.export(
 """
 import onnxruntime
 import numpy
+import os.path
 
 from ..stacking import MixedDensityEventStacking
 from ..shared.utils import check_cuda
@@ -40,13 +41,13 @@ class EventFrameConcentrater:
         ) -> None:
         self.stack_function = MixedDensityEventStacking(stack_size, num_of_event,
                                                            event_height, event_width, **kwargs) 
-
+        
         if check_cuda():
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
-            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx", providers=providers)
+            self.ort_session = onnxruntime.InferenceSession(os.path.join(os.path.dirname(__file__), "concentrate_events.onnx"), providers=providers)
         else:
-            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/concentration_net/concentrate_events.onnx")
+            self.ort_session = onnxruntime.InferenceSession(os.path.join(os.path.dirname(__file__), "concentrate_events.onnx"))
 
     def __getitem__(self, raw_events):
         event_data = self._pre_load_event_data(raw_events)

@@ -1,6 +1,7 @@
 import onnxruntime
 import numpy
 import torch
+import os.path
 
 from .utils import CropParameters, EventPreprocessor, IntensityRescaler, ImageFilter, UnsharpMaskFilter, events_to_voxel_grid, events_to_voxel_grid_pytorch
 from ..shared.utils import check_cuda
@@ -18,9 +19,9 @@ class Event2VideoConverter:
         if check_cuda():
             print("Using GPU for onnx inference")
             providers = [("CUDAExecutionProvider", {"device_id": 0}), "CPUExecutionProvider"]
-            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx", providers=providers)
+            self.ort_session = onnxruntime.InferenceSession(os.path.join(os.path.dirname(__file__), "e2vid_net.onnx"), providers=providers)
         else:
-            self.ort_session = onnxruntime.InferenceSession("src/evshow/event2frame/e2vid/e2vid_net.onnx")
+            self.ort_session = onnxruntime.InferenceSession(os.path.join(os.path.dirname(__file__), "e2vid_net.onnx"))
         self.model_params = {
             "imageHeight": height,
             "imageWidth": width,
