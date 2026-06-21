@@ -1,2 +1,2 @@
-python3 -m evshow  /mydata/datasets/unitree-go-dataset/slam/test_raw/seq12/events/left/events.h5 -o /mydata/datasets/unitree-go-dataset/slam/test_raw/seq12/events/left/events_eros/ --rw_module dsec --eros --dtms 50
+python3 -m evshow  /mydata/code/evshow/data/sample_dsecformat.h5 -o /mydata/code/evshow/data/dsec_eros/ --rw_module dsec --eros --dtms 50 --show
 # python3 -m evshow /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/right/events.h5 -o /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/right/ --numevents 500000 --rw_module dsec --concentrate --tsfile /media/runqiu/HDD1/opensource-dataset/dsec/test/zurich_city_15_a/events/left/timestamps.json

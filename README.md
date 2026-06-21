@@ -57,11 +57,7 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
   - On [dsec](https://github.com/uzh-rpg/DSEC) format data:
     ```bash
     cd ./evshow
-    
-    # install git LFS if not yet
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-    sudo apt-get install git-lfs
-    git lfs install
+
     # use git LFS to download sample data
     git lfs pull
     # or download the sample data from here (https://drive.google.com/file/d/1bPtD5iJ4tcNJVkIboVrkbzbF0N7AMs1A/view?usp=sharing)
