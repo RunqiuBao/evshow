@@ -33,6 +33,12 @@ advanced = [
     "torch",
     "onnxruntime-gpu",
 ]
+# Everything needed to run the test suite (the tests exercise every
+# representation, including the advanced backends).
+test = [
+    "pytest",
+    "evshow[advanced]",
+]
 
 [project.scripts]
 evshow = "evshow:__main__.main"

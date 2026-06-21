@@ -35,7 +35,7 @@ def inputs_concentrate():
         "existing_tsfile_path": None
     }
 
-def test_e2vid(inputs_e2vid):    
+def test_e2vid(inputs_e2vid):
     evshow.evshow(**inputs_e2vid)
     for i in range(10):
         assert (inputs_e2vid["output_path"] / "png" / f"{i:06d}.png").exists()

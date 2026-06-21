@@ -11,3 +11,7 @@ setup:
 
 setup-advanced:
 	python3 -m pip install .[advanced]
+
+test:
+	python3 -m pip install .[test]
+	python3 -m pytest -s
