@@ -7,6 +7,7 @@ import tqdm
 from .event2frame.stacking import AccumulateEventsIntoFrame
 from .event2frame.concentration_net.concentration_net import EventFrameConcentrater
 from .event2frame.e2vid.e2vid_net import Event2VideoConverter
+from .event2frame.eros import EROS
 
 
 def evshow(
@@ -17,6 +18,7 @@ def evshow(
     numevents_perslice: int,
     is_use_concentrate: bool,
     is_use_e2vid: bool,
+    is_use_eros: bool,
     num_frames_exit: int,
     is_save_lmdb: bool,
     existing_tsfile_path: Path
@@ -45,6 +47,8 @@ def evshow(
     elif is_use_e2vid:
         num_bins = 5
         e2vid_converter = Event2VideoConverter(eventReader.frameShape[1], eventReader.frameShape[0], num_bins)  # Note: rpg_e2vid pre-trained model uses 5 channels.
+    elif is_use_eros:
+        eros_converter = EROS(eventReader.frameShape[0], eventReader.frameShape[1])
 
     if existing_tsfile_path is None:
         list_frameEnd_ts = []
@@ -67,6 +71,8 @@ def evshow(
             eventFrameImg = event_concentrater[events]
         elif is_use_e2vid:
             eventFrameImg = e2vid_converter[events]
+        elif is_use_eros:
+            eventFrameImg = eros_converter[events]
         else:
             eventFrameImg, eventFrame = AccumulateEventsIntoFrame(events, eventReader.frameShape)
 
@@ -74,7 +80,15 @@ def evshow(
         eventFrameWriter.WriteOneFrame(indexBatch, eventFrameImg)
 
         if existing_tsfile_path is None:
-            list_frameEnd_ts.append(str(events['t'][-1] + eventReader.GetTimeOffsetUs()))
+            if len(events['t']) > 0:
+                frame_end_ts = int(events['t'][-1] + eventReader.GetTimeOffsetUs())
+            elif eventReader.t_start_us is not None:
+                # empty time window (can happen with a small --dtms): the reader has
+                # already advanced t_start_us to the end of this window, so use it.
+                frame_end_ts = int(eventReader.t_start_us + eventReader.GetTimeOffsetUs())
+            else:
+                frame_end_ts = int(eventReader.GetTimeOffsetUs())
+            list_frameEnd_ts.append(str(frame_end_ts))
 
     if existing_tsfile_path is None:
         # write timestamp file:

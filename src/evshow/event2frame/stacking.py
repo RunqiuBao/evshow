@@ -20,7 +20,11 @@ def AccumulateEventsIntoFrame(events, frameShape):
 
     eventFrameImg = eventFrame.astype('int16')
     eventFrameImg -= eventFrameImg.min()
-    return (eventFrameImg.astype('float') * 255 / eventFrameImg.max()).astype('uint8'), eventFrame
+    max_val = eventFrameImg.max()
+    if max_val == 0:
+        # empty (or perfectly uniform) slice: nothing to normalize, return a black frame.
+        return numpy.zeros(frameShape[::-1], dtype='uint8'), eventFrame
+    return (eventFrameImg.astype('float') * 255 / max_val).astype('uint8'), eventFrame
 
 
 """

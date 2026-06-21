@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--tsfile", help="Read in a list of timestamps as reference (from the same folder as input_file). Only support timestamps + number_of_events currently.")
     parser.add_argument("--concentrate", action="store_true", help="use concentrate network to generate sharp frames. Need to set --numevents.")
     parser.add_argument("--e2vid", action="store_true", help="use e2vid network to predict grayscale image from events. Need to set --numevents.")
+    parser.add_argument("--eros", action="store_true", help="use EROS (Exponential Reduced Ordinal Surface) representation.")
     parser.add_argument("--numframes", help="Number of event frames for early quit.")
     parser.add_argument("--savelmdb", action="store_true", help="whether save output to lmdb format.")
 
@@ -53,6 +54,7 @@ def main():
         numevents_perslice=int(args.numevents) if args.numevents else None,
         is_use_concentrate=args.concentrate if args.concentrate else False,
         is_use_e2vid=args.e2vid if args.e2vid else False,
+        is_use_eros=args.eros if args.eros else False,
         num_frames_exit=int(args.numframes) if args.numframes else None,
         is_save_lmdb=args.savelmdb if args.savelmdb else False,
         existing_tsfile_path=Path(args.tsfile) if args.tsfile else None

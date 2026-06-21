@@ -35,6 +35,11 @@ Inspired by [imshow](https://github.com/wkentaro/imshow), creating an event2fram
       <div align="left">
       <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/e2vid.png" width="200", height="150">
       </div>
+    - **EROS**: from [events-driven](https://github.com/robotology/event-driven).
+      Note EROS is a "surface" representation, therefore the `--dtms` we use to define events chunk does not influence its appearance, only influence the frames rate of result video. 
+      <div align="left">
+      <img src="https://github.com/RunqiuBao/evshow/blob/main/.readme/eros.png" width="200", height="150">
+      </div>
 
 ## Install and Usage:
 - **Install**:
