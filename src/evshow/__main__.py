@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--eros", action="store_true", help="use EROS (Exponential Reduced Ordinal Surface) representation.")
     parser.add_argument("--numframes", help="Number of event frames for early quit.")
     parser.add_argument("--savelmdb", action="store_true", help="whether save output to lmdb format.")
+    parser.add_argument("--show", action="store_true", help="display the generated frames in a GUI window as they are produced.")
 
     official_loaders = [
         loader for loader in dir(evshow.readwrite) if not loader.startswith("_")
@@ -57,7 +58,8 @@ def main():
         is_use_eros=args.eros if args.eros else False,
         num_frames_exit=int(args.numframes) if args.numframes else None,
         is_save_lmdb=args.savelmdb if args.savelmdb else False,
-        existing_tsfile_path=Path(args.tsfile) if args.tsfile else None
+        existing_tsfile_path=Path(args.tsfile) if args.tsfile else None,
+        is_show=args.show if args.show else False
     )
 
 
