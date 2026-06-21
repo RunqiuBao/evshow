@@ -16,12 +16,12 @@ def evshow(
     output_path: Path,
     dt_ms: int,
     numevents_perslice: int,
-    is_use_concentrate: bool,
-    is_use_e2vid: bool,
-    is_use_eros: bool,
     num_frames_exit: int,
     is_save_lmdb: bool,
     existing_tsfile_path: Path,
+    is_use_concentrate: bool = False,
+    is_use_e2vid: bool = False,
+    is_use_eros: bool = False,
     is_show: bool = False
 ) -> None:
     """
