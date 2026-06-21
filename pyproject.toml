@@ -14,6 +14,25 @@ requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3"
 ]
+dependencies = [
+    "opencv-python",
+    "numba",
+    "h5py",
+    "hdf5plugin",
+    "ruff",
+    "tqdm",
+    "scipy",
+    "lmdb",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+# Heavy backends for the neural-network representations (e2vid needs torch,
+# concentrate needs onnxruntime-gpu). Install with: pip install evshow[advanced]
+advanced = [
+    "torch",
+    "onnxruntime-gpu",
+]
 
 [project.scripts]
 evshow = "evshow:__main__.main"
